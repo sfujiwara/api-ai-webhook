@@ -31,5 +31,9 @@ def main():
         "data": {"slack": {"text": translated_message}},
         "contextOut": [],
         "source": "AppEngine",
+        # "followupEvent": {
+        #     "name": "followup_event_sample",
+        #     "data": None
+        # },
     }
     return flask.jsonify(res)
