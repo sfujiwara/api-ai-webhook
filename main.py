@@ -3,8 +3,10 @@
 import json
 import logging
 import flask
+import os
 from google.cloud import translate
-
+from google.appengine.api import urlfetch
+import uuid
 
 app = flask.Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -37,3 +39,30 @@ def main():
         # },
     }
     return flask.jsonify(res)
+
+
+@app.route("/time", methods=["GET"])
+def time_signal():
+    apiai_token = os.getenv("APIAI_TOKEN")
+    headers = {
+        "Authorization": "Bearer {}".format(apiai_token),
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "lang": "ja",
+        "event": {
+            "name": "time_signal",
+            "data": None
+        },
+        "sessionId": "hoge"
+    }
+    result = urlfetch.fetch(
+        url="https://api.api.ai/v1/query",
+        payload=json.dumps(payload),
+        method=urlfetch.POST,
+        headers=headers
+    )
+    response = json.loads(result.content)
+    logging.info(response)
+    return flask.jsonify(response)
+
